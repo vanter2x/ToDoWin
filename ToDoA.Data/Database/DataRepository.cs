@@ -11,8 +11,7 @@ namespace ToDoA.Data.Database
 {
     public class DataRepository : IDataRepository<Memento>
     {
-        private readonly IDbConnection _connection;
-        private string _config = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+        private readonly string _config = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
 
         internal IDbConnection Connection
         {
@@ -21,18 +20,12 @@ namespace ToDoA.Data.Database
                 return new NpgsqlConnection(_config);
             }
         }
-
-
-        public DataRepository()
-        { 
-            _connection = new NpgsqlConnection(_config);
-        }
         
         public void AddMemo(Memento memento)
         {
             using (IDbConnection dbConnection = Connection)
             {
-                _connection.Execute("INSERT INTO mementos (text) VALUES(@Text)", memento);
+                Connection.Execute("INSERT INTO mementos (text) VALUES(@Text)", memento);
             }
         }
 
@@ -45,19 +38,28 @@ namespace ToDoA.Data.Database
         {
             using (IDbConnection dbConnection = Connection)
             {
-                return _connection.Query<Memento>("Select * From mementos").ToList();
-            }
+                var result = Connection.Query<Memento>("Select * From mementos").ToList();
 
+                return result;
+            }
         }
 
         public Memento GetMemo(int id)
         {
-            throw new System.NotImplementedException();
+            using (IDbConnection dbConnection = Connection)
+            {
+                var result = Connection.Query<Memento>($"Select * From mementos where id = @Id", new { Id = id }).FirstOrDefault();
+
+                return result;
+            }
         }
 
         public void UpdateMemo(Memento memento)
         {
-            throw new System.NotImplementedException();
+            using (IDbConnection dbConnection = Connection)
+            {
+                Connection.Query<Memento>($"UPDATE mementos SET text = @Text WHERE id=@Id", memento);
+            }
         }
     }
 }

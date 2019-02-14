@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Autofac;
+using System;
 using System.Windows.Forms;
+using Autofac.Core;
+using ToDoA.Data.Database;
+using Container = System.ComponentModel.Container;
 
 namespace ToDoA.WinForm
 {
     static class Program
     {
+        private static Container container;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
